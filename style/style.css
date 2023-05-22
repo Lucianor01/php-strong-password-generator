@@ -1,0 +1,23 @@
+body {
+    background-color: #001632;
+}
+
+h1 {
+    color: #808c9b;
+}
+
+h2 {
+    color: #ffffff;
+}
+
+.output-pw {
+    background-color: #cff4fc;
+}
+
+.output-pw p {
+    font-size: 18px;
+}
+
+.container-input {
+    background-color: #f8f9fa;
+}
