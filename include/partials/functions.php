@@ -54,8 +54,9 @@ function generateRandomPassword($qtyLetters, $password, $lunghezzaConFiltri, $st
 
             for ($i = 0; strlen($password) < $qtyLetters; $i++) {
                 $letteraRandom = $str[rand(0, strlen($str) - 1)];
+                $correzioneSimboli = preg_quote($letteraRandom, '/');
 
-                if (!preg_match('/$letteraRandom/', $password)) {
+                if (!preg_match("/$correzioneSimboli/", $password)) {
                     $password .= $letteraRandom;
                 }
             }
