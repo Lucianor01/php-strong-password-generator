@@ -1,25 +1,77 @@
 <?php
 
-function generateRandomPassword($length, $characterRepeat, $includeLetters, $includeNumbers, $includeSymbols)
+session_start();
+
+$str = '';
+
+$lunghezzaConFiltri = 0;
+
+$qtyLetters = 0;
+
+$password = '';
+
+$qtyLetters = (isset($_GET['lunghezzaCaratteri'])) ? intval($_GET['lunghezzaCaratteri']) : '';
+
+$ripetizioni = (isset($_GET['radioValue'])) ? $_GET['radioValue'] : '';
+
+// var_dump($qtyLetters, $ripetizioni);
+
+$arrayScelte = [
+    [
+        'type' => 'lettere',
+        'arguments' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        'active' => (isset($_GET['letters'])) ? true : false
+    ],
+    [
+        'type' => 'numeri',
+        'arguments' => '0123456789',
+        'active' => (isset($_GET['numbers'])) ? true : false
+    ],
+    [
+        'type' => 'simboli',
+        'arguments' => '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~',
+        'active' => (isset($_GET['symbols'])) ? true : false
+    ]
+];
+
+// var_dump($arrayScelte);
+
+foreach ($arrayScelte as $elem) {
+    if ($elem['active']) {
+        $str .= $elem['arguments'];
+        $lunghezzaConFiltri += strlen($elem['arguments']);
+    }
+}
+
+// var_dump($str, $lunghezzaConFiltri);
+
+function generateRandomPassword($qtyLetters, $password, $lunghezzaConFiltri, $str, $ripetizioni)
 {
-    $characters = '';
-    if ($includeLetters) $characters = $characters . 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    if ($includeNumbers) $characters = $characters . '0123456789';
-    if ($includeSymbols) $characters = $characters . '!@#$%^&*()';
 
+    if ($qtyLetters > 0 && $lunghezzaConFiltri > 0) {
 
-    $password = '';
-    $characterCount = strlen($characters);
+        if ($ripetizioni == 'no') {
 
-    for ($i = 0; $i < $length; $i++) {
-        if (!$characterRepeat && $i > 0) {
-            $previousCharacter = $password[$i - 1];
-            $characters = str_replace($previousCharacter, '', $characters);
-            $characterCount = strlen($characters);
+            for ($i = 0; strlen($password) < $qtyLetters; $i++) {
+                $letteraRandom = $str[rand(0, strlen($str) - 1)];
+
+                if (!preg_match('/$letteraRandom/', $password)) {
+                    $password .= $letteraRandom;
+                }
+            }
+        } else {
+
+            for ($i = 0; strlen($password) < $qtyLetters; $i++) {
+                $password .= $str[rand(0, strlen($str) - 1)];
+            }
         }
-        $randomIndex = rand(0, $characterCount - 1);
-        $password = $password . $characters[$randomIndex];
     }
 
     return $password;
 }
+
+// var_dump(generateRandomPassword($qtyLetters, $password, $lunghezzaConFiltri, $str, $ripetizioni));
+
+$_SESSION['password'] = generateRandomPassword($qtyLetters, $password, $lunghezzaConFiltri, $str, $ripetizioni);
+
+// var_dump($_SESSION['password']);
